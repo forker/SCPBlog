@@ -60,7 +60,6 @@ public class SCPPublishCommand implements Command, Runnable {
     protected boolean optF;
     protected boolean optD;
     protected boolean optP; // TODO: handle modification times
-    protected FileSystemView root;
     protected String path;
     protected InputStream in;
     protected OutputStream out;
@@ -124,9 +123,7 @@ public class SCPPublishCommand implements Command, Runnable {
         this.callback = callback;
     }
 
-    public void setFileSystemView(FileSystemView view) {
-        this.root = view;
-    }
+
 
     public void start(Environment env) throws IOException {
         if (error != null) {
@@ -141,10 +138,10 @@ public class SCPPublishCommand implements Command, Runnable {
     public void run() {
         int exitValue = SCPPublishHelper.OK;
         String exitMessage = null;
-        SCPPublishHelper helper = new SCPPublishHelper(in, out, root);
+        SCPPublishHelper helper = new SCPPublishHelper(in, out);
         try {
             if (optT) {
-                helper.receive(root.getFile(path), optR, optD, optP);
+                helper.receive(path, optR, optD, optP);
             } else if (optF) {
                 helper.send(Collections.singletonList(path), optR, optP);
             } else {
