@@ -7,7 +7,7 @@ package sshblog.dal.model;
  * Time: 7:50 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Article {
+public class Article implements WithId {
 
 
     private String id;
