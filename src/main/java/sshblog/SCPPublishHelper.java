@@ -1,12 +1,5 @@
 package sshblog;
 
-/**
- * Created with IntelliJ IDEA.
- * User: forker
- * Date: 10/13/13
- * Time: 8:33 PM
- * To change this template use File | Settings | File Templates.
- */
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,43 +19,17 @@ package sshblog;
  * under the License.
  */
 
-import org.apache.sshd.common.SshException;
-import org.apache.sshd.common.file.FileSystemView;
-import org.apache.sshd.common.file.SshFile;
-import org.apache.sshd.common.util.DirectoryScanner;
-import org.pegdown.PegDownProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
-
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.sshd.common.SshException;
-import org.apache.sshd.common.file.FileSystemView;
-import org.apache.sshd.common.file.SshFile;
-import org.apache.sshd.common.util.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sshblog.dal.ArticleDAO;
 import sshblog.dal.model.Article;
 
+import java.io.*;
+import java.util.List;
+
 /**
- * @author <a href="mailto:dev@mina.apache.org">Apache MINA SSHD Project</a>
+ * modification of ScpCommandHelper from Apache MINA SSHD project
+ *
  */
 public class SCPPublishHelper {
 
@@ -71,16 +38,6 @@ public class SCPPublishHelper {
     public static final int OK = 0;
     public static final int WARNING = 1;
     public static final int ERROR = 2;
-
-    public static final int S_IRUSR =  0000400;
-    public static final int S_IWUSR =  0000200;
-    public static final int S_IXUSR =  0000100;
-    public static final int S_IRGRP =  0000040;
-    public static final int S_IWGRP =  0000020;
-    public static final int S_IXGRP =  0000010;
-    public static final int S_IROTH =  0000004;
-    public static final int S_IWOTH =  0000002;
-    public static final int S_IXOTH =  0000001;
 
     protected final InputStream in;
     protected final OutputStream out;
