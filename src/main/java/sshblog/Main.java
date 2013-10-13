@@ -22,9 +22,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-
-        articleDAO.save(new Article("test", "Hi There"));
-
         get(new Route("/:id") {
             @Override
             public Object handle(Request request, Response response) {
@@ -35,7 +32,7 @@ public class Main {
         SshServer sshd = SshServer.setUpDefaultServer();
         sshd.setPort(2222);
         sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("host.key"));
-        sshd.setCommandFactory(new SCPPublishCommand.Factory());
+        sshd.setCommandFactory(new SCPPublishCommand.Factory(articleDAO));
         sshd.setPasswordAuthenticator(new StupidPasswordAuthenticator());
         sshd.start();
         Thread.sleep(Long.MAX_VALUE);

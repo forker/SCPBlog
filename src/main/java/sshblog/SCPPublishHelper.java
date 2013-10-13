@@ -57,6 +57,8 @@ import org.apache.sshd.common.file.SshFile;
 import org.apache.sshd.common.util.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sshblog.dal.ArticleDAO;
+import sshblog.dal.model.Article;
 
 /**
  * @author <a href="mailto:dev@mina.apache.org">Apache MINA SSHD Project</a>
@@ -82,7 +84,10 @@ public class SCPPublishHelper {
     protected final InputStream in;
     protected final OutputStream out;
 
-    public SCPPublishHelper(InputStream in, OutputStream out) {
+    private ArticleDAO articleDAO;
+
+    public SCPPublishHelper(ArticleDAO articleDAO, InputStream in, OutputStream out) {
+        this.articleDAO = articleDAO;
         this.in = in;
         this.out = out;
     }
@@ -147,7 +152,7 @@ public class SCPPublishHelper {
         String name = header.substring(header.indexOf(' ', 6) + 1);
 
 
-        OutputStream os = new ByteArrayOutputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ack();
 
@@ -164,6 +169,9 @@ public class SCPPublishHelper {
         } finally {
             os.close();
         }
+
+
+        articleDAO.save(new Article(path, new String(os.toByteArray(), "UTF-8")));
 
         ack();
         readAck(false);
@@ -226,5 +234,12 @@ public class SCPPublishHelper {
         return c;
     }
 
+    public ArticleDAO getArticleDAO() {
+        return articleDAO;
+    }
+
+    public void setArticleDAO(ArticleDAO articleDAO) {
+        this.articleDAO = articleDAO;
+    }
 }
 

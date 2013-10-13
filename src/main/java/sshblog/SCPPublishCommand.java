@@ -9,6 +9,7 @@ import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.command.ScpCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sshblog.dal.ArticleDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,23 +17,25 @@ import java.io.OutputStream;
 import java.util.Collections;
 
 /**
- * Created with IntelliJ IDEA.
  * User: forker
  * Date: 10/13/13
  * Time: 7:58 PM
- * To change this template use File | Settings | File Templates.
+ *
+ * Modified version of ScpCommand class from Apache Mina SSHD project
+ *
  */
 public class SCPPublishCommand implements Command, Runnable {
 
+    public void setArticleDAO(ArticleDAO articleDAO) {
+        this.articleDAO = articleDAO;
+    }
+
     public static class Factory implements CommandFactory {
 
-        private CommandFactory delegate;
+        private ArticleDAO articleDAO;
 
-        public Factory() {
-        }
-
-        public Factory(CommandFactory delegate) {
-            this.delegate = delegate;
+        public Factory(ArticleDAO articleDAO) {
+            this.articleDAO = articleDAO;
         }
 
         /**
@@ -48,7 +51,9 @@ public class SCPPublishCommand implements Command, Runnable {
             if (!command.startsWith("scp")) {
                 throw new IllegalArgumentException("Unknown command, does not begin with 'scp'");
             }
-            return  new SCPPublishCommand(command);
+            SCPPublishCommand cmd =  new SCPPublishCommand(command);
+            cmd.setArticleDAO(articleDAO);
+            return cmd;
         }
     }
 
@@ -66,6 +71,8 @@ public class SCPPublishCommand implements Command, Runnable {
     protected OutputStream err;
     protected ExitCallback callback;
     protected IOException error;
+
+    private ArticleDAO articleDAO;
 
 
 
@@ -138,7 +145,7 @@ public class SCPPublishCommand implements Command, Runnable {
     public void run() {
         int exitValue = SCPPublishHelper.OK;
         String exitMessage = null;
-        SCPPublishHelper helper = new SCPPublishHelper(in, out);
+        SCPPublishHelper helper = new SCPPublishHelper(articleDAO, in, out);
         try {
             if (optT) {
                 helper.receive(path, optR, optD, optP);
