@@ -9,6 +9,9 @@ import spark.*;
 import sshblog.dal.ArticleDAO;
 import sshblog.dal.model.Article;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 /**
  * Created with IntelliJ IDEA.
  * User: forker
@@ -20,7 +23,7 @@ public class Main {
 
     public static ArticleDAO articleDAO = new ArticleDAO();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)  {
 
         get(new Route("/:id") {
             @Override
@@ -29,13 +32,28 @@ public class Main {
             }
         });
 
+        startSSHServer();
+
+        try {
+            Thread.sleep(Long.MAX_VALUE);
+        } catch(InterruptedException iex) {
+            //Silent bye...
+        }
+
+    }
+
+    private static void startSSHServer()  {
         SshServer sshd = SshServer.setUpDefaultServer();
         sshd.setPort(2222);
         sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("host.key"));
         sshd.setCommandFactory(new SCPPublishCommand.Factory(articleDAO));
         sshd.setPasswordAuthenticator(new StupidPasswordAuthenticator());
-        sshd.start();
-        Thread.sleep(Long.MAX_VALUE);
+        try {
+            sshd.start();
+        } catch(IOException ex) {
+            Logger.getLogger(Main.class.getName()).info("Failed to start SSH server. Publishing is not available.");
+        }
+
     }
 
 }

@@ -14,6 +14,6 @@ public class StupidPasswordAuthenticator implements PasswordAuthenticator {
 
     @Override
     public boolean authenticate(String s, String s2, ServerSession serverSession) {
-        return true;
+        return "me".equals(s) && "4u".equals(s2);
     }
 }

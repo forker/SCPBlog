@@ -30,6 +30,7 @@ import org.apache.sshd.common.SshException;
 import org.apache.sshd.common.file.FileSystemView;
 import org.apache.sshd.common.file.SshFile;
 import org.apache.sshd.common.util.DirectoryScanner;
+import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +86,8 @@ public class SCPPublishHelper {
     protected final OutputStream out;
 
     private ArticleDAO articleDAO;
+
+    private PageGenerator pageGenerator = new PageGenerator();
 
     public SCPPublishHelper(ArticleDAO articleDAO, InputStream in, OutputStream out) {
         this.articleDAO = articleDAO;
@@ -171,7 +174,7 @@ public class SCPPublishHelper {
         }
 
 
-        articleDAO.save(new Article(path, new String(os.toByteArray(), "UTF-8")));
+        articleDAO.save(new Article(path, pageGenerator.fromMarkdown(path, new String(os.toByteArray(), "UTF-8"))));
 
         ack();
         readAck(false);
@@ -234,12 +237,6 @@ public class SCPPublishHelper {
         return c;
     }
 
-    public ArticleDAO getArticleDAO() {
-        return articleDAO;
-    }
 
-    public void setArticleDAO(ArticleDAO articleDAO) {
-        this.articleDAO = articleDAO;
-    }
 }
 
